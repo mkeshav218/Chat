@@ -73,26 +73,27 @@ public class ControllerImpl {
 	
 	@PostMapping(path="/joinroom")
 	public String joinRoom(@RequestBody CreateRoomDto createRoomDto) {
-		try {
-			if(service.login(createRoomDto.getEmailId(), createRoomDto.getPassword())) {
-				Registration registration = service.getUserDetails(createRoomDto.getEmailId());
-				Set<Registration> registrations = new HashSet<>();
-				registrations.add(registration);
-				RoomInfo roomInfo = new RoomInfo();
-				roomInfo.setRoomName(createRoomDto.getRoomName());
-				roomInfo.setRegistration(registrations);
-				boolean result = service.addRoom(roomInfo);
-				if(result) {
-					return "Room created successfully";	
-				}else {
-					return "Room Creation Failed";
-				}
-			}else {
-				return "Room Creation Failed";
-			}
-		}catch (Exception e) {
-			return e.getMessage();
-		}
+//		try {
+//			if(service.login(createRoomDto.getEmailId(), createRoomDto.getPassword())) {
+//				Registration registration = service.getUserDetails(createRoomDto.getEmailId());
+//				Set<Registration> registrations = new HashSet<>();
+//				registrations.add(registration);
+//				RoomInfo roomInfo = new RoomInfo();
+//				roomInfo.setRoomName(createRoomDto.getRoomName());
+//				roomInfo.setRegistration(registrations);
+//				boolean result = service.addRoom(roomInfo);
+//				if(result) {
+//					return "Room created successfully";	
+//				}else {
+//					return "Room Creation Failed";
+//				}
+//			}else {
+//				return "Room Creation Failed";
+//			}
+//		}catch (Exception e) {
+//			return e.getMessage();
+//		}
+		return null;
 	}
 	
 }
