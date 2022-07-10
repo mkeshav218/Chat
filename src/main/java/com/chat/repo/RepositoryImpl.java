@@ -1,7 +1,11 @@
 package com.chat.repo;
 
+import java.util.List;
+import java.util.Set;
+
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
 
 import org.springframework.transaction.annotation.Transactional;
 
@@ -17,6 +21,11 @@ public class RepositoryImpl implements Repository {
 	@Transactional
 	public void addRegistration(Registration newRegister) {
 		entityManager.persist(newRegister);
+	}
+	
+	@Transactional
+	public void updateRegistration(Registration newRegister) {
+		entityManager.merge(newRegister);
 	}
 
 	@Transactional
@@ -35,5 +44,24 @@ public class RepositoryImpl implements Repository {
 	public void addRoom(RoomInfo roomInfo) {
 		entityManager.persist(roomInfo);
 	}
+	
+	@Transactional 
+	public RoomInfo getRoom(int roomId) {
+		RoomInfo roomInfo = entityManager.find(RoomInfo.class, roomId);
+		return roomInfo;
+	}
 
+	@Transactional
+	public List<RoomInfo> getAllRoom(){
+		String hql = "FROM RoomInfo";
+		Query query = entityManager.createQuery(hql); 
+		List<RoomInfo> allRooms = query.getResultList();
+		return allRooms;
+	}
+	
+	@Transactional
+	public Set<RoomInfo> getUserRooms(String emailId){
+		Registration reg = getUserDetails(emailId);
+		return reg.getroomInfo();
+	}
 }

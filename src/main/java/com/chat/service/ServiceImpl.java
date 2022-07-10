@@ -1,5 +1,8 @@
 package com.chat.service;
 
+import java.util.List;
+import java.util.Set;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -20,6 +23,17 @@ public class ServiceImpl implements ProjectService {
 			repo.addRegistration(newRegister);
 			return true;
 		}catch (Exception e) {
+			return false;
+		}
+	}
+	
+	@Override
+	public boolean updateRegistration(Registration newRegister) {
+		try {
+			repo.updateRegistration(newRegister);
+			return true;
+		}catch (Exception e) {
+			System.out.println(e.getMessage());
 			return false;
 		}
 	}
@@ -55,5 +69,20 @@ public class ServiceImpl implements ProjectService {
 		}catch (Exception e) {
 			return false;
 		}
+	}
+	
+	@Override
+	public RoomInfo getRoom(int roomId) {
+		return repo.getRoom(roomId);
+	}
+	
+	@Override
+	public List<RoomInfo> getAllRoom(){
+		return repo.getAllRoom();
+	}
+	
+	@Override
+	public Set<RoomInfo> getUserRooms(String emailId){
+		return repo.getUserRooms(emailId);
 	}
 }

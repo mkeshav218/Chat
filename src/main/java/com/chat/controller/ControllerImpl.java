@@ -1,6 +1,6 @@
 package com.chat.controller;
 
-import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.chat.dto.CreateRoomDto;
+import com.chat.dto.JoinRoomDto;
 import com.chat.dto.LoginDto;
 import com.chat.entity.Registration;
 import com.chat.entity.RoomInfo;
@@ -50,16 +51,14 @@ public class ControllerImpl {
 	public String createRoom(@RequestBody CreateRoomDto createRoomDto) {
 		try {
 			if(service.login(createRoomDto.getEmailId(), createRoomDto.getPassword())) {
-				Registration registration = service.getUserDetails(createRoomDto.getEmailId());
-				System.out.println(registration);
-				Set<Registration> registrations = new HashSet<>();
-				registrations.add(registration);
 				RoomInfo roomInfo = new RoomInfo();
 				roomInfo.setRoomName(createRoomDto.getRoomName());
-				roomInfo.setRegistration(registrations);
-				boolean result = service.addRoom(roomInfo);
-				if(result) {
-					return "Room created successfully";	
+				boolean isRoomAdded = service.addRoom(roomInfo);
+				if(isRoomAdded) {
+					Registration registration = service.getUserDetails(createRoomDto.getEmailId());
+					registration.getroomInfo().add(roomInfo);
+					service.updateRegistration(registration);
+					return "Room created successfully";
 				}else {
 					return "Room Creation Failed";
 				}
@@ -72,28 +71,73 @@ public class ControllerImpl {
 	}
 	
 	@PostMapping(path="/joinroom")
-	public String joinRoom(@RequestBody CreateRoomDto createRoomDto) {
-//		try {
-//			if(service.login(createRoomDto.getEmailId(), createRoomDto.getPassword())) {
-//				Registration registration = service.getUserDetails(createRoomDto.getEmailId());
-//				Set<Registration> registrations = new HashSet<>();
-//				registrations.add(registration);
-//				RoomInfo roomInfo = new RoomInfo();
-//				roomInfo.setRoomName(createRoomDto.getRoomName());
-//				roomInfo.setRegistration(registrations);
-//				boolean result = service.addRoom(roomInfo);
-//				if(result) {
-//					return "Room created successfully";	
-//				}else {
-//					return "Room Creation Failed";
-//				}
-//			}else {
-//				return "Room Creation Failed";
-//			}
-//		}catch (Exception e) {
-//			return e.getMessage();
-//		}
-		return null;
+	public String joinRoom(@RequestBody JoinRoomDto joinRoomDto) {
+		try {
+			if(service.login(joinRoomDto.getEmailId(), joinRoomDto.getPassword())) {
+				Registration registration = service.getUserDetails(joinRoomDto.getEmailId());
+				RoomInfo roomInfo = service.getRoom(joinRoomDto.getRoomId());
+				registration.getroomInfo().add(roomInfo);
+				boolean result = service.updateRegistration(registration);
+				if(result) {
+					return "Room joined successfully";	
+				}else {
+					return "Room joined Failed";
+				}
+			}else {
+				return "Room joined Failed";
+			}
+		}catch (Exception e) {
+			return e.getMessage();
+		}
+	}
+	
+	@PostMapping(path="/leaveroom")
+	public String leaveRoom(@RequestBody JoinRoomDto joinRoomDto) {
+		try {
+			if(service.login(joinRoomDto.getEmailId(), joinRoomDto.getPassword())) {
+				Registration registration = service.getUserDetails(joinRoomDto.getEmailId());
+				RoomInfo roomInfo = service.getRoom(joinRoomDto.getRoomId());
+				registration.getroomInfo().remove(roomInfo);
+				boolean result = service.updateRegistration(registration);
+				if(result) {
+					return "Leaved Room successfully";	
+				}else {
+					return "Leave Room Failed";
+				}
+			}else {
+				return "Leave Room Failed";
+			}
+		}catch (Exception e) {
+			return e.getMessage();
+		}
+	}
+	
+	@PostMapping(path="/getallroom")
+	public List<RoomInfo> getAllRoom(@RequestBody LoginDto loginDto) {
+		try {
+			if(service.login(loginDto.getEmailId(), loginDto.getPassword())) {
+				return service.getAllRoom();
+			}else {
+				return null;
+			}
+		}catch (Exception e) {
+			System.out.println(e.getMessage());
+			return null;
+		}
+	}
+	
+	@PostMapping(path="/getuserrooms")
+	public Set<RoomInfo> getUserRooms(@RequestBody LoginDto loginDto) {
+		try {
+			if(service.login(loginDto.getEmailId(), loginDto.getPassword())) {
+				return service.getUserRooms(loginDto.getEmailId());
+			}else {
+				return null;
+			}
+		}catch (Exception e) {
+			System.out.println(e.getMessage());
+			return null;
+		}
 	}
 	
 }

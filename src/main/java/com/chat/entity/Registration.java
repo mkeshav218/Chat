@@ -1,14 +1,23 @@
 package com.chat.entity;
 
+import java.util.HashSet;
 import java.util.Set;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.Table;
+
+import org.springframework.stereotype.Component;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 @Entity
 @Table(name="Registration")
+@Component
 public class Registration {
 	@Id
 	@Column(length=30)
@@ -23,20 +32,24 @@ public class Registration {
 	@Column(length=20)
 	private String password;
 	
-	@ManyToMany(mappedBy = "registration")
-	private Set<RoomInfo> rommInfo;
+	@ManyToMany
+	@JsonIgnore
+	@JoinTable(name = "Registration_Room",
+				joinColumns = @JoinColumn(name="emailId"),
+				inverseJoinColumns = @JoinColumn(name="roomId"))
+	private Set<RoomInfo> roomInfo = new HashSet<>();
 
 	public Registration() {
 		super();
 	}
 
-	public Registration(String emailId, String name, String contactNo, String password, Set<RoomInfo> rommInfo) {
+	public Registration(String emailId, String name, String contactNo, String password, Set<RoomInfo> roomInfo) {
 		super();
 		this.emailId = emailId;
 		this.name = name;
 		this.contactNo = contactNo;
 		this.password = password;
-		this.rommInfo = rommInfo;
+		this.roomInfo = roomInfo;
 	}
 
 	public String getEmailId() {
@@ -71,18 +84,18 @@ public class Registration {
 		this.password = password;
 	}
 
-	public Set<RoomInfo> getRommInfo() {
-		return rommInfo;
+	public Set<RoomInfo> getroomInfo() {
+		return roomInfo;
 	}
 
-	public void setRommInfo(Set<RoomInfo> rommInfo) {
-		this.rommInfo = rommInfo;
+	public void addRoomInfo(RoomInfo roomInfo) {
+		this.roomInfo.add(roomInfo);
 	}
 
 	@Override
 	public String toString() {
 		return "Registration [emailId=" + emailId + ", name=" + name + ", contactNo=" + contactNo + ", password="
-				+ password + ", rommInfo=" + rommInfo + "]";
+				+ password + "]";
 	}
 	
 }
