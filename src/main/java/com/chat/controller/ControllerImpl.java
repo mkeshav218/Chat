@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.chat.dto.AddUserDto;
 import com.chat.dto.CreateRoomDto;
 import com.chat.dto.JoinRoomDto;
 import com.chat.dto.LoginDto;
@@ -121,7 +122,6 @@ public class ControllerImpl {
 				return null;
 			}
 		}catch (Exception e) {
-			System.out.println(e.getMessage());
 			return null;
 		}
 	}
@@ -135,8 +135,29 @@ public class ControllerImpl {
 				return null;
 			}
 		}catch (Exception e) {
-			System.out.println(e.getMessage());
 			return null;
+		}
+	}
+	
+	@PostMapping(path="/addUser")
+	public String addUser(@RequestBody AddUserDto addUserDto) {
+		//Todo : Only Admin should add.
+		try {
+			if(service.login(addUserDto.getEmailId(),addUserDto.getPassword())) {
+				Registration registration = service.getUserDetails(addUserDto.getUserEmailId());
+				RoomInfo roomInfo = service.getRoom(addUserDto.getRoomId());
+				registration.getroomInfo().add(roomInfo);
+				boolean result = service.updateRegistration(registration);
+				if(result) {
+					return "User added successfully";	
+				}else {
+					return "User not added";
+				}
+			}else {
+				return "User not added";
+			}
+		}catch (Exception e) {
+			return e.getMessage();
 		}
 	}
 	
