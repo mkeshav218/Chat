@@ -42,7 +42,35 @@ Api details
     	"roomId":1
     }
     
-5)Add user to Room
+5)Leave-Room
+  Type :- Post
+  Url :- http://localhost:8587/leaveroom
+  Input JSON :- 
+    {
+    	"emailId":"p1@gmail.com",
+		"password":"password",
+    	"roomId":1
+	}
+	
+6)Get-All-Room
+  Type :- Post
+  Url :- http://localhost:8587/getallroom
+  Input JSON :- 
+    {
+    	"emailId":"p1@gmail.com",
+		"password":"password"
+	}
+	
+7)Get-User-Room
+  Type :- Post
+  Url :- http://localhost:8587/getuserrooms
+  Input JSON :- 
+    {
+    	"emailId":"p1@gmail.com",
+		"password":"password"
+	}		
+    
+8)Add user to Room
   Type :- Post
   Url :- http://localhost:8587/addUser
   Input JSON :- 
